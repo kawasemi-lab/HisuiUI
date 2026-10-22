@@ -20,6 +20,8 @@ MonoBehaviour:
       - f09044b7-0d58-4c2a-9562-24bd92ff5d7e
       - 48267f39-7d53-43a2-ab99-95127d727fff
       - 25a4c397-0fe7-4bee-a68b-db4bba872cb3
+      - d04a09b3-b5b3-4924-925d-31742a525434
+      - f2ed4503-1867-4101-a2da-6fb8c0b10fde
       _values:
       - _id: 7e18506b-b39e-4b23-8f84-6cbd95472ff7
         _name:
@@ -47,7 +49,7 @@ MonoBehaviour:
           - _value: {r: 1, g: 1, b: 1, a: 1}
       - _id: 48267f39-7d53-43a2-ab99-95127d727fff
         _name:
-          _value: Text
+          _value: Text-Dark
         _values:
           _keys:
           - b2c91921-a095-40c8-8ca1-b83020147fe5
@@ -61,6 +63,22 @@ MonoBehaviour:
           - b2c91921-a095-40c8-8ca1-b83020147fe5
           _values:
           - _value: {r: 0.9882353, g: 0.94133484, b: 0.8904, a: 1}
+      - _id: d04a09b3-b5b3-4924-925d-31742a525434
+        _name:
+          _value: FadeBackground
+        _values:
+          _keys:
+          - b2c91921-a095-40c8-8ca1-b83020147fe5
+          _values:
+          - _value: {r: 0, g: 0, b: 0, a: 0.6}
+      - _id: f2ed4503-1867-4101-a2da-6fb8c0b10fde
+        _name:
+          _value: Text-Light
+        _values:
+          _keys:
+          - b2c91921-a095-40c8-8ca1-b83020147fe5
+          _values:
+          - _value: {r: 1, g: 1, b: 1, a: 1}
     _themes:
       _keys:
       - b2c91921-a095-40c8-8ca1-b83020147fe5
@@ -75,6 +93,8 @@ MonoBehaviour:
       - f09044b7-0d58-4c2a-9562-24bd92ff5d7e
       - 48267f39-7d53-43a2-ab99-95127d727fff
       - 25a4c397-0fe7-4bee-a68b-db4bba872cb3
+      - d04a09b3-b5b3-4924-925d-31742a525434
+      - f2ed4503-1867-4101-a2da-6fb8c0b10fde
     _themeOrders:
       _ids:
       - b2c91921-a095-40c8-8ca1-b83020147fe5
@@ -117,6 +137,7 @@ MonoBehaviour:
     _entries:
       _keys:
       - 3a34ffe0-f0ee-4d4f-b23d-f803e8245644
+      - a622b9aa-0969-4d0b-8e9e-255bc3ce74c3
       _values:
       - _id: 3a34ffe0-f0ee-4d4f-b23d-f803e8245644
         _name:
@@ -140,6 +161,28 @@ MonoBehaviour:
               lineSpacing: 0
               paragraphSpacing: 0
               fontSharedMaterial: {fileID: 0}
+      - _id: a622b9aa-0969-4d0b-8e9e-255bc3ce74c3
+        _name:
+          _value: Header2
+        _values:
+          _keys:
+          - 4bdb11d3-39f6-48d4-bb2f-377f92fd640d
+          _values:
+          - _value:
+              font: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+              fontStyle: 0
+              fontSize: 35
+              enableAutoSizing: 0
+              enableAutoSizeOptions: 1
+              fontSizeMin: 18
+              fontSizeMax: 72
+              characterWidthAdjustment: 0
+              lineSpacingAdjustment: 0
+              characterSpacing: 0
+              wordSpacing: 0
+              lineSpacing: 0
+              paragraphSpacing: 0
+              fontSharedMaterial: {fileID: 0}
     _themes:
       _keys:
       - 4bdb11d3-39f6-48d4-bb2f-377f92fd640d
@@ -150,6 +193,7 @@ MonoBehaviour:
     _entryOrders:
       _ids:
       - 3a34ffe0-f0ee-4d4f-b23d-f803e8245644
+      - a622b9aa-0969-4d0b-8e9e-255bc3ce74c3
     _themeOrders:
       _ids:
       - 4bdb11d3-39f6-48d4-bb2f-377f92fd640d
