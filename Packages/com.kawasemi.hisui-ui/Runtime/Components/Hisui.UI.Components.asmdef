@@ -1,0 +1,21 @@
+{
+    "name": "Hisui.UI.Components",
+    "rootNamespace": "Hisui.UI.Components",
+    "references": [
+        "Hisui.UI.Core",
+        "Hisui.UI.Palette",
+        "uPalette",
+        "LitMotion",
+        "UniTask",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

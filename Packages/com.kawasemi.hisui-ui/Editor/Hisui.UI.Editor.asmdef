@@ -1,0 +1,19 @@
+{
+    "name": "Hisui.UI.Editor",
+    "rootNamespace": "Hisui.UI.Editor",
+    "references": [
+        "Hisui.UI.Palette",
+        "uPalette"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
