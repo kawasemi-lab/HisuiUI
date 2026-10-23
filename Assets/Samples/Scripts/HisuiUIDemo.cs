@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Hisui.UI.Components;
 using UnityEngine;
+using UnityEngine.UI;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -10,9 +11,30 @@ public class HisuiUIDemo : MonoBehaviour
     [Header("Components to Test")]
     [SerializeField] private DelayGauge _gauge;
     [SerializeField] private PanelTransition _panel;
+    [SerializeField] private EdgeSlideIn _edgeSlideIn;
+
+    [Header("Gauge Settings")]
+    [SerializeField] private float _gaugeStep = 0.2f;
+
+    [Header("uGUI Buttons (Optional / Auto-Binding)")]
+    [Tooltip("Gaugeを減らすボタン")]
+    [SerializeField] private Button _decreaseGaugeButton;
+    [Tooltip("Gaugeを増やすボタン")]
+    [SerializeField] private Button _increaseGaugeButton;
+    [Tooltip("Panelを開く/閉じるボタン（トグル）")]
+    [SerializeField] private Button _togglePanelButton;
+    [Tooltip("Panelの中に置く、Panelを閉じるボタン")]
+    [SerializeField] private Button _closePanelButton;
+    [Tooltip("EdgeSlideInを再生するボタン")]
+    [SerializeField] private Button _playEdgeSlideInButton;
 
     private float _currentHp = 1.0f;
     private bool _isPaused = false;
+
+    private void Awake()
+    {
+        RegisterButtonListeners();
+    }
 
     private void Start()
     {
@@ -25,10 +47,30 @@ public class HisuiUIDemo : MonoBehaviour
 
     private void OnDestroy()
     {
+        UnregisterButtonListeners();
+
         if (_gauge != null)
         {
             _gauge.OnValueChanged -= OnGaugeValueChanged;
         }
+    }
+
+    private void RegisterButtonListeners()
+    {
+        if (_decreaseGaugeButton != null) _decreaseGaugeButton.onClick.AddListener(DecreaseGauge);
+        if (_increaseGaugeButton != null) _increaseGaugeButton.onClick.AddListener(IncreaseGauge);
+        if (_togglePanelButton != null) _togglePanelButton.onClick.AddListener(TogglePanel);
+        if (_closePanelButton != null) _closePanelButton.onClick.AddListener(ClosePanel);
+        if (_playEdgeSlideInButton != null) _playEdgeSlideInButton.onClick.AddListener(PlayEdgeSlideIn);
+    }
+
+    private void UnregisterButtonListeners()
+    {
+        if (_decreaseGaugeButton != null) _decreaseGaugeButton.onClick.RemoveListener(DecreaseGauge);
+        if (_increaseGaugeButton != null) _increaseGaugeButton.onClick.RemoveListener(IncreaseGauge);
+        if (_togglePanelButton != null) _togglePanelButton.onClick.RemoveListener(TogglePanel);
+        if (_closePanelButton != null) _closePanelButton.onClick.RemoveListener(ClosePanel);
+        if (_playEdgeSlideInButton != null) _playEdgeSlideInButton.onClick.RemoveListener(PlayEdgeSlideIn);
     }
 
     private void OnGaugeValueChanged(float newValue)
@@ -45,15 +87,19 @@ public class HisuiUIDemo : MonoBehaviour
         }
         else if (WasKeyPressed(KeyCode.D, Key.D))
         {
-            TakeDamage(0.2f);
+            DecreaseGauge();
         }
         else if (WasKeyPressed(KeyCode.H, Key.H))
         {
-            Heal(0.2f);
+            IncreaseGauge();
         }
         else if (WasKeyPressed(KeyCode.R, Key.R))
         {
             ResetGauge();
+        }
+        else if (WasKeyPressed(KeyCode.E, Key.E))
+        {
+            PlayEdgeSlideIn();
         }
         else if (WasKeyPressed(KeyCode.P, Key.P) && !IsModifierHeld())
         {
@@ -61,6 +107,11 @@ public class HisuiUIDemo : MonoBehaviour
         }
     }
 
+    // --- Panel 操作 ---
+
+    /// <summary>
+    /// Panel を開閉トグルする（開いていたら閉じる、閉じていたら開く）
+    /// </summary>
     public void TogglePanel()
     {
         if (_panel == null) return;
@@ -68,11 +119,49 @@ public class HisuiUIDemo : MonoBehaviour
         _panel.Toggle();
     }
 
+    /// <summary>
+    /// Panel を開く
+    /// </summary>
+    public void OpenPanel()
+    {
+        if (_panel == null) return;
+        Debug.Log("[HisuiUI Demo] Open Panel");
+        _panel.Open();
+    }
+
+    /// <summary>
+    /// Panel を閉じる（Panel 内の閉じるボタン用）
+    /// </summary>
+    public void ClosePanel()
+    {
+        if (_panel == null) return;
+        Debug.Log("[HisuiUI Demo] Close Panel");
+        _panel.Close();
+    }
+
+    // --- Gauge 操作 ---
+
+    /// <summary>
+    /// Gauge を減らす
+    /// </summary>
+    public void DecreaseGauge()
+    {
+        TakeDamage(_gaugeStep);
+    }
+
+    /// <summary>
+    /// Gauge を増やす
+    /// </summary>
+    public void IncreaseGauge()
+    {
+        Heal(_gaugeStep);
+    }
+
     public void TakeDamage(float amount)
     {
         if (_gauge == null) return;
         _currentHp = Mathf.Max(0f, _currentHp - amount);
-        Debug.Log($"[HisuiUI Demo] Damage! New HP: {_currentHp:F2}");
+        Debug.Log($"[HisuiUI Demo] Decrease Gauge! New Value: {_currentHp:F2}");
         _gauge.SetValue(_currentHp);
     }
 
@@ -80,7 +169,7 @@ public class HisuiUIDemo : MonoBehaviour
     {
         if (_gauge == null) return;
         _currentHp = Mathf.Min(1f, _currentHp + amount);
-        Debug.Log($"[HisuiUI Demo] Heal! New HP: {_currentHp:F2}");
+        Debug.Log($"[HisuiUI Demo] Increase Gauge! New Value: {_currentHp:F2}");
         _gauge.SetValue(_currentHp);
     }
 
@@ -91,6 +180,20 @@ public class HisuiUIDemo : MonoBehaviour
         Debug.Log("[HisuiUI Demo] Gauge Reset (Immediate)");
         _gauge.SetValue(1.0f, immediate: true);
     }
+
+    // --- EdgeSlideIn 操作 ---
+
+    /// <summary>
+    /// EdgeSlideIn の登場アニメーションを再生する
+    /// </summary>
+    public void PlayEdgeSlideIn()
+    {
+        if (_edgeSlideIn == null) return;
+        Debug.Log("[HisuiUI Demo] Play EdgeSlideIn");
+        _edgeSlideIn.PlayIn();
+    }
+
+    // --- その他 ---
 
     public void TogglePause()
     {
@@ -119,48 +222,5 @@ public class HisuiUIDemo : MonoBehaviour
         }
 #endif
         return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.RightCommand);
-    }
-
-    // ゲーム画面（Game ビュー）上に操作用ボタンを表示
-    private void OnGUI()
-    {
-        using (new GUILayout.AreaScope(new Rect(20, 20, 240, 320), "HisuiUI Test Controller", GUI.skin.window))
-        {
-            GUILayout.Label($"Current HP: {_currentHp:P0}");
-            GUILayout.Label($"Panel Open: {(_panel != null && _panel.IsOpen)}");
-            GUILayout.Label($"TimeScale: {Time.timeScale:F1}");
-            GUILayout.Space(6);
-
-            if (GUILayout.Button("Damage -20% (D)"))
-            {
-                TakeDamage(0.2f);
-            }
-
-            if (GUILayout.Button("Heal +20% (H)"))
-            {
-                Heal(0.2f);
-            }
-
-            if (GUILayout.Button("Reset HP (R)"))
-            {
-                ResetGauge();
-            }
-
-            GUILayout.Space(6);
-
-            if (GUILayout.Button("Toggle Panel (Space)"))
-            {
-                TogglePanel();
-            }
-
-            GUILayout.Space(6);
-
-            GUI.color = _isPaused ? Color.yellow : Color.white;
-            if (GUILayout.Button(_isPaused ? "Resume Time (P)" : "Pause Time (P)"))
-            {
-                TogglePause();
-            }
-            GUI.color = Color.white;
-        }
     }
 }

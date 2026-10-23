@@ -29,3 +29,11 @@ Hisui.UI.Core       ← Hisui.UI.Palette ← Hisui.UI.Components
   - 対応 Canvas: Screen Space Overlay / Screen Space Camera（**World Space は対象外**）。
   - 親に `LayoutGroup` がある場合は位置が上書きされるため、ラッパーの `RectTransform` を挟むこと。
   - 詳細: `Assets/Documents/EdgeSlideIn_Guide.md`
+- **`ButtonMotion`** (`Component/Hisui/UI/Button Motion`)
+  - ボタンの状態（Normal / Hover / Pressed / Disabled / Selected）に応じた**スケール・位置オフセット**の演出と、`Button.onClick` に連動するクリックパンチ。色・スプライトには触れない（色は `Button` の Transition を使う）。
+  - 独立アセンブリ `Hisui.UI.Button`（`Core` のみ参照。**uPalette / `Hisui.UI.Palette` に依存しない**）。
+  - `Play()` = クリック演出の再生、`Stop()` = 進行中のモーションを止めて Normal に戻す。自動再生トリガーは使わない（None 固定）。
+  - **注意**
+    - `Button` の Transition が `Animation` の場合、Animator がスケール・位置を操作すると競合する。ButtonMotion と併用する場合は `Color Tint` などを使うこと。
+    - 他の ButtonMotion や `PanelTransition` と同じ `RectTransform` を操作すると競合する。見た目用の子オブジェクトに分けるなどで回避すること。
+  - 詳細: `Assets/Documents/ButtonMotion_Guide.md`

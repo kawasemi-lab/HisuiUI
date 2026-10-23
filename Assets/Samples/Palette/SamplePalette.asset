@@ -30,7 +30,7 @@ MonoBehaviour:
           _keys:
           - b2c91921-a095-40c8-8ca1-b83020147fe5
           _values:
-          - _value: {r: 1, g: 0.6300081, b: 0.231, a: 1}
+          - _value: {r: 0.915, g: 0.57770586, b: 0.21170588, a: 1}
       - _id: ef0868fd-859a-4e22-93b1-6e5f55b5b725
         _name:
           _value: Base
@@ -138,6 +138,7 @@ MonoBehaviour:
       _keys:
       - 3a34ffe0-f0ee-4d4f-b23d-f803e8245644
       - a622b9aa-0969-4d0b-8e9e-255bc3ce74c3
+      - 99eb2a44-321c-40f4-ad23-2d6bf0baaa4f
       _values:
       - _id: 3a34ffe0-f0ee-4d4f-b23d-f803e8245644
         _name:
@@ -183,6 +184,28 @@ MonoBehaviour:
               lineSpacing: 0
               paragraphSpacing: 0
               fontSharedMaterial: {fileID: 0}
+      - _id: 99eb2a44-321c-40f4-ad23-2d6bf0baaa4f
+        _name:
+          _value: Button
+        _values:
+          _keys:
+          - 4bdb11d3-39f6-48d4-bb2f-377f92fd640d
+          _values:
+          - _value:
+              font: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+              fontStyle: 0
+              fontSize: 30
+              enableAutoSizing: 0
+              enableAutoSizeOptions: 1
+              fontSizeMin: 18
+              fontSizeMax: 72
+              characterWidthAdjustment: 0
+              lineSpacingAdjustment: 0
+              characterSpacing: 0
+              wordSpacing: 0
+              lineSpacing: 0
+              paragraphSpacing: 0
+              fontSharedMaterial: {fileID: 0}
     _themes:
       _keys:
       - 4bdb11d3-39f6-48d4-bb2f-377f92fd640d
@@ -194,6 +217,7 @@ MonoBehaviour:
       _ids:
       - 3a34ffe0-f0ee-4d4f-b23d-f803e8245644
       - a622b9aa-0969-4d0b-8e9e-255bc3ce74c3
+      - 99eb2a44-321c-40f4-ad23-2d6bf0baaa4f
     _themeOrders:
       _ids:
       - 4bdb11d3-39f6-48d4-bb2f-377f92fd640d
