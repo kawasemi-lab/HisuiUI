@@ -23,7 +23,9 @@ namespace Hisui.UI.Components
     /// ・In（登場）と Out（退場）は別々の <see cref="PhaseSettings"/>（duration / ease / delay / stagger）を持つ。<br/>
     /// ・到着位置は最初に取得した <see cref="RectTransform.anchoredPosition"/>（<see cref="CaptureRestPosition"/> で再取得）。<br/>
     /// ・逆方向の再生が途中で呼ばれた場合は現在位置から滑らかに反転する。stagger 中でまだ動き出していない Target は動き出さずそのまま待機する。<br/>
-    /// ・フェードは Target 自身の <see cref="CanvasGroup"/>、無ければ <see cref="Graphic"/> の alpha を使う（どちらも無ければフェードしない。CanvasGroup は要求しない）。
+    /// ・フェードは Target 自身の <see cref="CanvasGroup"/>、無ければ <see cref="Graphic"/> の alpha を使う（どちらも無ければフェードしない。CanvasGroup は要求しない）。<br/>
+    /// ・初期状態が非アクティブ（または startHidden + deactivateOnClose）でも、<see cref="PlayIn"/> / <see cref="Play"/> で自動アクティブ化・Warmup を行って正常に登場する。<br/>
+    /// ・退場完了時の自動非アクティブ化（<see cref="Settings.deactivateOnClose"/>）にも対応。
     /// </para>
     /// <para>
     /// <b>オーバーシュートについて：</b>OutBack / Elastic などのオーバーシュートする Ease を選んだ場合、
@@ -101,6 +103,10 @@ namespace Hisui.UI.Components
             [Tooltip("再生前は画面外で非表示にしておく（OnEnable 時点で配置）")]
             public bool startHidden;
 
+            /// <summary>退場（Out）完了時に GameObject.SetActive(false) を自動で呼ぶか。</summary>
+            [Tooltip("退場完了時に GameObject.SetActive(false) を自動で呼ぶか")]
+            public bool deactivateOnClose;
+
             /// <summary>自動再生が OnEnable のときの開始遅延（秒）。</summary>
             [Tooltip("自動再生トリガーが OnEnable のときの開始遅延（秒）")]
             [Min(0f)]
@@ -141,6 +147,7 @@ namespace Hisui.UI.Components
                 outCustomDirection = new Vector2(1f, -1f),
                 extraMargin = 0f,
                 startHidden = true,
+                deactivateOnClose = false,
                 startDelay = 0f,
                 autoOutDelay = -1f,
                 scaleDurationOnReverse = true,
@@ -195,6 +202,8 @@ namespace Hisui.UI.Components
         private Action _onCompleteDelegate;
         private bool _autoOutArmed;
         private float _autoOutRemaining;
+        private bool _initialized;
+        private bool _suppressOnEnableAutoPlay;
 
         private static readonly Action<float, EdgeSlideIn> s_tickCallback = static (t, self) => self.Tick(t);
 
@@ -216,6 +225,28 @@ namespace Hisui.UI.Components
             SettingsRef = Settings.Default;
         }
 
+        private void Awake()
+        {
+            EnsureInitialized();
+        }
+
+        private void Start()
+        {
+            // startHidden が ON の場合、全子要素の Graphic / TMP などの初期化が完了した Start 時点で
+            // 一度 alpha > 0 の状態で Canvas をビルドし、初回登場時にメッシュ構築やマテリアル同期が
+            // スキップされるのを防ぐ（Start はフレーム 0 の描画前に実行されるため画面には一切表示されない）。
+            if (!_lastWasIn && !IsPlaying && gameObject.activeSelf && AutoPlayTrigger == PlayTrigger.None)
+            {
+                WarmupCanvasWhileVisible();
+                SetHidden(false);
+
+                if (SettingsRef.deactivateOnClose)
+                {
+                    DeactivateTargetsAndSelf();
+                }
+            }
+        }
+
         /// <inheritdoc />
         protected override void OnEnable()
         {
@@ -224,9 +255,14 @@ namespace Hisui.UI.Components
                 return;
             }
 
-            EnsureStates();
+            EnsureInitialized();
 
-            if (SettingsRef.startHidden)
+            if (_suppressOnEnableAutoPlay)
+            {
+                return;
+            }
+
+            if (SettingsRef.startHidden && !_lastWasIn && !IsPlaying)
             {
                 // 画面内に一瞬見えるチラつきを防ぐため、OnEnable の時点で登場元の画面外へ配置する。
                 SetHidden(false);
@@ -275,23 +311,34 @@ namespace Hisui.UI.Components
         /// <summary><see cref="HisuiMotionBehaviour.Play"/> は <see cref="PlayIn"/> と同義。</summary>
         protected override void OnPlayCore()
         {
+            PrepareForInIfInactive();
             StartTransition(true, 0f);
         }
 
         /// <summary>
         /// 登場（画面外 → 到着位置）を開始する。<see cref="HisuiMotionBehaviour.Play"/> と同義。
-        /// 退場の途中であれば現在位置から滑らかに反転する。
+        /// 非アクティブ時は自動的にアクティブ化して演出を開始する。退場の途中であれば現在位置から滑らかに反転する。
         /// </summary>
         public void PlayIn()
         {
+            PrepareForInIfInactive();
             Play();
         }
 
         /// <summary>
         /// 退場（到着位置 → 画面端の外）を開始する。登場の途中であれば現在位置から滑らかに反転する。
+        /// 非アクティブ時はアニメーションせずに即座に画面外状態（および設定に応じて非アクティブ）にする。
         /// </summary>
         public void PlayOut()
         {
+            EnsureInitialized();
+
+            if (!gameObject.activeInHierarchy)
+            {
+                SetOutImmediate();
+                return;
+            }
+
             CancelTrackedMotionsAndIncrementVersion();
             StartTransition(false, 0f);
         }
@@ -330,12 +377,39 @@ namespace Hisui.UI.Components
             return PlayInAsync(ct);
         }
 
-        /// <summary>演出なしで、全 Target を到着位置（登場済み）にする。</summary>
+        /// <summary>演出なしで、全 Target を到着位置（登場済み）にする。非アクティブ時は自動でアクティブ化する。</summary>
         public void SetInImmediate()
         {
             _autoOutArmed = false;
             CancelTrackedMotionsAndIncrementVersion();
-            EnsureStates();
+
+            bool wasInactive = !gameObject.activeSelf;
+            if (wasInactive)
+            {
+                _suppressOnEnableAutoPlay = true;
+                gameObject.SetActive(true);
+                _suppressOnEnableAutoPlay = false;
+            }
+
+            if (_targets != null && _targets.Count > 0)
+            {
+                for (int i = 0; i < _targets.Count; i++)
+                {
+                    var t = _targets[i];
+                    if (t != null && !t.gameObject.activeSelf)
+                    {
+                        t.gameObject.SetActive(true);
+                    }
+                }
+            }
+
+            EnsureInitialized();
+
+            if (wasInactive)
+            {
+                Canvas.ForceUpdateCanvases();
+            }
+
             for (int i = 0; i < _stateCount; i++)
             {
                 _states[i].progress = 1f;
@@ -346,10 +420,15 @@ namespace Hisui.UI.Components
             ApplyAll();
         }
 
-        /// <summary>演出なしで、全 Target を画面外（退場済み。退場先の側）にする。画面外位置はこの時点で再計算する。</summary>
+        /// <summary>演出なしで、全 Target を画面外（退場済み。退場先の側）にする。画面外位置はこの時点で再計算する。deactivateOnClose が有効な場合は非アクティブ化する。</summary>
         public void SetOutImmediate()
         {
             SetHidden(true);
+
+            if (SettingsRef.deactivateOnClose && gameObject.activeSelf)
+            {
+                DeactivateTargetsAndSelf();
+            }
         }
 
         private void SetHidden(bool atOutSide)
@@ -377,9 +456,9 @@ namespace Hisui.UI.Components
         /// </summary>
         public EdgeSlideIn CaptureRestPosition()
         {
-            if (_stateCount == 0)
+            if (!_initialized)
             {
-                EnsureStates();
+                EnsureInitialized();
                 return this;
             }
 
@@ -550,6 +629,11 @@ namespace Hisui.UI.Components
                 _autoOutArmed = true;
                 _autoOutRemaining = autoOut;
             }
+
+            if (!_lastWasIn && SettingsRef.deactivateOnClose && gameObject.activeSelf)
+            {
+                DeactivateTargetsAndSelf();
+            }
         }
 
         private float EvaluateEase(float t)
@@ -561,6 +645,124 @@ namespace Hisui.UI.Components
             }
 
             return EaseUtility.Evaluate(t, _activeSpec.ease);
+        }
+
+        private void EnsureInitialized()
+        {
+            if (_initialized)
+            {
+                return;
+            }
+
+            _initialized = true;
+            EnsureStates();
+
+            if (SettingsRef.startHidden)
+            {
+                SetHidden(false);
+            }
+        }
+
+        private void PrepareForInIfInactive()
+        {
+            bool wasInactive = !gameObject.activeSelf;
+            if (wasInactive)
+            {
+                _suppressOnEnableAutoPlay = true;
+                gameObject.SetActive(true);
+                _suppressOnEnableAutoPlay = false;
+            }
+
+            if (_targets != null && _targets.Count > 0)
+            {
+                for (int i = 0; i < _targets.Count; i++)
+                {
+                    var t = _targets[i];
+                    if (t != null && !t.gameObject.activeSelf)
+                    {
+                        t.gameObject.SetActive(true);
+                    }
+                }
+            }
+
+            EnsureInitialized();
+
+            if (wasInactive || AllHidden())
+            {
+                WarmupCanvasWhileVisible();
+                ApplyAll();
+            }
+        }
+
+        private void WarmupCanvasWhileVisible()
+        {
+            var selfCg = GetComponent<CanvasGroup>();
+            float selfPrevAlpha = 1f;
+            bool hasSelfCg = selfCg != null;
+            if (hasSelfCg)
+            {
+                selfPrevAlpha = selfCg.alpha;
+                selfCg.alpha = 1f;
+            }
+
+            bool hasAnyAlpha = false;
+            float[] prevAlphas = null;
+            if (_stateCount > 0)
+            {
+                prevAlphas = new float[_stateCount];
+                for (int i = 0; i < _stateCount; i++)
+                {
+                    ref var st = ref _states[i];
+                    prevAlphas[i] = ReadAlpha(in st);
+                    if (st.canvasGroup != null)
+                    {
+                        st.canvasGroup.alpha = 1f;
+                        hasAnyAlpha = true;
+                    }
+                    else if (st.graphic != null)
+                    {
+                        var c = st.graphic.color;
+                        c.a = 1f;
+                        st.graphic.color = c;
+                        hasAnyAlpha = true;
+                    }
+                }
+            }
+
+            Canvas.ForceUpdateCanvases();
+
+            if (hasSelfCg)
+            {
+                selfCg.alpha = selfPrevAlpha;
+            }
+
+            if (hasAnyAlpha && prevAlphas != null)
+            {
+                for (int i = 0; i < _stateCount; i++)
+                {
+                    WriteAlpha(in _states[i], prevAlphas[i]);
+                }
+            }
+        }
+
+        private void DeactivateTargetsAndSelf()
+        {
+            if (_targets != null && _targets.Count > 0)
+            {
+                for (int i = 0; i < _targets.Count; i++)
+                {
+                    var t = _targets[i];
+                    if (t != null && t.gameObject.activeSelf)
+                    {
+                        t.gameObject.SetActive(false);
+                    }
+                }
+            }
+
+            if (gameObject.activeSelf)
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         #region State
@@ -921,6 +1123,13 @@ namespace Hisui.UI.Components
         public EdgeSlideIn SetStartHidden(bool startHidden)
         {
             SettingsRef.startHidden = startHidden;
+            return this;
+        }
+
+        /// <summary>退場完了時に GameObject.SetActive(false) を呼ぶかを設定する（メソッドチェーン対応）。</summary>
+        public EdgeSlideIn SetDeactivateOnClose(bool deactivate)
+        {
+            SettingsRef.deactivateOnClose = deactivate;
             return this;
         }
 

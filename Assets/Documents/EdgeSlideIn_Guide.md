@@ -33,6 +33,7 @@ VerticalLayoutGroup
 - **In / Out**: それぞれ `Motion`（duration / ease / delay）、`Stagger Interval`、`Stagger Order`。
 - **Use Fade**: Target 自身の `CanvasGroup`、無ければ `Graphic` の alpha を使う（どちらも無ければフェードなし。CanvasGroup は要求しない）。
 - **Start Hidden**（既定 ON）: `OnEnable` の時点で画面外へ配置。**Start Delay** は自動再生 `OnEnable` 時の待ち時間。
+- **Deactivate On Close**: 退場（Out）完了時や `SetOutImmediate()` 時に `GameObject.SetActive(false)` を自動で呼ぶ。既定 OFF。初期状態が `StartHidden` かつ自動再生なしの場合、`Start()` 時点で自動非アクティブ化される。`SetDeactivateOnClose(bool)`。
 - **Auto Out Delay**: `-1` で自動退場しない。`0` 以上なら In 完了からその秒数待って自動で Out を開始（`PlayInAsync` の完了には影響しない）。手動の `PlayOut` / `Stop` / `SetInImmediate` などで予約は解除される。既定は `-1`（`AddComponent` 直後は 0 になるため `Configure(Settings.Default)` か `SetAutoOut(-1)` を呼ぶこと）。
 - **Scale Duration On Reverse**: 途中反転時、残り距離に応じて duration を短縮。
 
@@ -64,6 +65,13 @@ slide.Configure(EdgeSlideIn.Settings.Default);
 - 逆方向の再生が途中で呼ばれると、現在位置から滑らかに反転する。stagger 中の反転では、**まだ動き出していない Target は動き出さずそのまま待機**する。
 - すでに到着済みの状態から `PlayIn` を呼ぶと、画面外から再演出する。
 - Cancel / Stop / OnDisable / OnDestroy の挙動は基底（`HisuiMotionBehaviour`）の方針に従い、`PlayAsync` 系は例外を投げず静かに戻る。
+
+## 初期非アクティブ時の動作（PanelTransition と同様）
+
+- **初期状態で非アクティブでも動作**: GameObject が非アクティブ（インスペクタで非アクティブ、または `startHidden` + `deactivateOnClose` で非アクティブ化済み）であっても、`PlayIn()` / `PlayInAsync()` / `Play()` / `SetInImmediate()` を呼ぶと**自動的に `SetActive(true)`** される。
+- **キャンバスの Warmup**: 初回アクティブ化時に `Canvas.ForceUpdateCanvases()` による Warmup（メッシュ生成・マテリアル同期・レイアウト確定）を一瞬の描画前に行うため、1フレームのチラつきやメッシュ描画スキップが発生しない。
+- **OnEnable 自動再生の誤作動防止**: スクリプトからの手動再生によるアクティブ化時には、`OnEnable` の自動再生トリガーが二重に走らないよう抑制される。
+- **非アクティブ時の退場**: `gameObject.activeInHierarchy` が false の状態で `PlayOut()` / `PlayOutAsync()` を呼んだ場合は、アニメーションを行わず即座に画面外（退場済み）状態へ同期される。
 
 ## Core 側ヘルパー（将来の `EdgeSlideInText` 向け）
 

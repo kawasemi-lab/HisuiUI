@@ -2,7 +2,10 @@
     "name": "Hisui.UI.Editor",
     "rootNamespace": "Hisui.UI.Editor",
     "references": [
+        "Hisui.UI.Core",
         "Hisui.UI.Palette",
+        "Hisui.UI.Components",
+        "Hisui.UI.Button",
         "uPalette"
     ],
     "includePlatforms": [
