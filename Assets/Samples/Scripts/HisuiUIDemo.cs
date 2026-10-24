@@ -14,6 +14,7 @@ public class HisuiUIDemo : MonoBehaviour
     [SerializeField] private DelayGauge _gauge;
     [SerializeField] private PanelTransition _panel;
     [SerializeField] private EdgeSlideIn _edgeSlideIn;
+    [SerializeField] private Popup _popup;
 
     [Header("LoadingScreen Demo")]
     [Tooltip("LoadingScreen コンポーネント（未指定時は LoadingScreen.Instance を自動使用）")]
@@ -35,6 +36,8 @@ public class HisuiUIDemo : MonoBehaviour
     [SerializeField] private Button _closePanelButton;
     [Tooltip("EdgeSlideInを再生するボタン")]
     [SerializeField] private Button _playEdgeSlideInButton;
+    [Tooltip("Popup単体を再生するボタン")]
+    [SerializeField] private Button _playPopupButton;
 
     [Header("LoadingScreen Buttons")]
     [Tooltip("サブシーン (BuildIndex=1) へ遷移するボタン")]
@@ -103,6 +106,7 @@ public class HisuiUIDemo : MonoBehaviour
         if (_togglePanelButton != null) _togglePanelButton.onClick.AddListener(TogglePanel);
         if (_closePanelButton != null) _closePanelButton.onClick.AddListener(ClosePanel);
         if (_playEdgeSlideInButton != null) _playEdgeSlideInButton.onClick.AddListener(PlayEdgeSlideIn);
+        if (_playPopupButton != null) _playPopupButton.onClick.AddListener(PlayPopup);
 
         if (_loadSubSceneButton != null) _loadSubSceneButton.onClick.AddListener(LoadSubScene);
         if (_showFullScreenPanelButton != null) _showFullScreenPanelButton.onClick.AddListener(ShowFullScreenPanelWithLoading);
@@ -116,6 +120,7 @@ public class HisuiUIDemo : MonoBehaviour
         if (_togglePanelButton != null) _togglePanelButton.onClick.RemoveListener(TogglePanel);
         if (_closePanelButton != null) _closePanelButton.onClick.RemoveListener(ClosePanel);
         if (_playEdgeSlideInButton != null) _playEdgeSlideInButton.onClick.RemoveListener(PlayEdgeSlideIn);
+        if (_playPopupButton != null) _playPopupButton.onClick.RemoveListener(PlayPopup);
 
         if (_loadSubSceneButton != null) _loadSubSceneButton.onClick.RemoveListener(LoadSubScene);
         if (_showFullScreenPanelButton != null) _showFullScreenPanelButton.onClick.RemoveListener(ShowFullScreenPanelWithLoading);
@@ -149,6 +154,10 @@ public class HisuiUIDemo : MonoBehaviour
         else if (WasKeyPressed(KeyCode.E, Key.E))
         {
             PlayEdgeSlideIn();
+        }
+        else if (WasKeyPressed(KeyCode.U, Key.U))
+        {
+            PlayPopup();
         }
         else if (WasKeyPressed(KeyCode.L, Key.L))
         {
@@ -354,6 +363,18 @@ public class HisuiUIDemo : MonoBehaviour
         if (_edgeSlideIn == null) return;
         Debug.Log("[HisuiUI Demo] Play EdgeSlideIn");
         _edgeSlideIn.PlayIn();
+    }
+
+    // --- Popup 操作 ---
+
+    /// <summary>
+    /// Popup の登場アニメーションを再生する
+    /// </summary>
+    public void PlayPopup()
+    {
+        if (_popup == null) return;
+        Debug.Log("[HisuiUI Demo] Play Popup");
+        _popup.PlayIn();
     }
 
     // --- その他 ---
