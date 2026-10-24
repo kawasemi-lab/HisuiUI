@@ -15,6 +15,7 @@ public class HisuiUIDemo : MonoBehaviour
     [SerializeField] private PanelTransition _panel;
     [SerializeField] private EdgeSlideIn _edgeSlideIn;
     [SerializeField] private Popup _popup;
+    [SerializeField] private Typewriter _typewriter;
 
     [Header("LoadingScreen Demo")]
     [Tooltip("LoadingScreen コンポーネント（未指定時は LoadingScreen.Instance を自動使用）")]
@@ -46,6 +47,12 @@ public class HisuiUIDemo : MonoBehaviour
     [SerializeField] private Button _showFullScreenPanelButton;
     [Tooltip("ローディング画面を出して全画面パネルを閉じるボタン")]
     [SerializeField] private Button _hideFullScreenPanelButton;
+
+    [Header("Typewriter Buttons")]
+    [Tooltip("Typewriterでテキスト送りを再生するボタン")]
+    [SerializeField] private Button _playTypewriterButton;
+    [Tooltip("Typewriterの文字送りをスキップするボタン")]
+    [SerializeField] private Button _skipTypewriterButton;
 
     private float _currentHp = 1.0f;
     private bool _isPaused = false;
@@ -111,6 +118,9 @@ public class HisuiUIDemo : MonoBehaviour
         if (_loadSubSceneButton != null) _loadSubSceneButton.onClick.AddListener(LoadSubScene);
         if (_showFullScreenPanelButton != null) _showFullScreenPanelButton.onClick.AddListener(ShowFullScreenPanelWithLoading);
         if (_hideFullScreenPanelButton != null) _hideFullScreenPanelButton.onClick.AddListener(HideFullScreenPanelWithLoading);
+
+        if (_playTypewriterButton != null) _playTypewriterButton.onClick.AddListener(PlayTypewriter);
+        if (_skipTypewriterButton != null) _skipTypewriterButton.onClick.AddListener(SkipTypewriter);
     }
 
     private void UnregisterButtonListeners()
@@ -125,6 +135,9 @@ public class HisuiUIDemo : MonoBehaviour
         if (_loadSubSceneButton != null) _loadSubSceneButton.onClick.RemoveListener(LoadSubScene);
         if (_showFullScreenPanelButton != null) _showFullScreenPanelButton.onClick.RemoveListener(ShowFullScreenPanelWithLoading);
         if (_hideFullScreenPanelButton != null) _hideFullScreenPanelButton.onClick.RemoveListener(HideFullScreenPanelWithLoading);
+
+        if (_playTypewriterButton != null) _playTypewriterButton.onClick.RemoveListener(PlayTypewriter);
+        if (_skipTypewriterButton != null) _skipTypewriterButton.onClick.RemoveListener(SkipTypewriter);
     }
 
     private void OnGaugeValueChanged(float newValue)
@@ -170,6 +183,14 @@ public class HisuiUIDemo : MonoBehaviour
         else if (WasKeyPressed(KeyCode.C, Key.C))
         {
             HideFullScreenPanelWithLoading();
+        }
+        else if (WasKeyPressed(KeyCode.T, Key.T))
+        {
+            PlayTypewriter();
+        }
+        else if (WasKeyPressed(KeyCode.Y, Key.Y))
+        {
+            SkipTypewriter();
         }
         else if (WasKeyPressed(KeyCode.P, Key.P) && !IsModifierHeld())
         {
@@ -375,6 +396,37 @@ public class HisuiUIDemo : MonoBehaviour
         if (_popup == null) return;
         Debug.Log("[HisuiUI Demo] Play Popup");
         _popup.PlayIn();
+    }
+
+    // --- Typewriter 操作 ---
+
+    private int _typewriterIndex = 0;
+    private static readonly string[] s_demoTexts = new[]
+    {
+        "Hello World!",
+        "This is Typewriter Text Sample"
+    };
+
+    /// <summary>
+    /// Typewriter の文字送りを再生する（デモテキストを順次切り替え）
+    /// </summary>
+    public void PlayTypewriter()
+    {
+        if (_typewriter == null) return;
+        string text = s_demoTexts[_typewriterIndex % s_demoTexts.Length];
+        _typewriterIndex++;
+        Debug.Log($"[HisuiUI Demo] Play Typewriter: {text}");
+        _typewriter.Play(text);
+    }
+
+    /// <summary>
+    /// Typewriter の文字送りを即時完了（スキップ）する
+    /// </summary>
+    public void SkipTypewriter()
+    {
+        if (_typewriter == null) return;
+        Debug.Log("[HisuiUI Demo] Skip Typewriter");
+        _typewriter.Skip();
     }
 
     // --- その他 ---

@@ -6,7 +6,9 @@
         "Hisui.UI.Palette",
         "Hisui.UI.Components",
         "Hisui.UI.Button",
-        "uPalette"
+        "uPalette",
+        "LitMotion",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"
