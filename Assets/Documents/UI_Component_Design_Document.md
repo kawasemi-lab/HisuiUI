@@ -99,3 +99,16 @@ Hisui.UI.Core       ← Hisui.UI.Palette       ← Hisui.UI.Components
   - `OnValidate()` のコールスタック内で直接 `RectTransform.anchorMin` / `anchorMax` を書き換えると、Unity の `SendMessage cannot be called during OnValidate` 警告が発生する。
   - **対策**: `OnValidate()` では変更フラグのみを立て、直後の `Update()` や `EditorApplication.QueuePlayerLoopUpdate()` 経由で安全に値変更・モーション開始を行う。
   - Edit モード中もフレームごとの描画更新を行わせるため、モーション値の更新コールバック内で `#if UNITY_EDITOR` による `EditorApplication.QueuePlayerLoopUpdate()` を発行する。
+
+### 3.6 インスペクタの条件付き項目出し分け（`AnimBool` + `BeginFadeGroup`）
+- **Unity 標準（`Button.Transition` 等）に準拠した滑らかなアコーディオン開閉**:
+  - `bool` トグル（例: `ApplySortingOrder`）や `enum` 選択（例: `SpinnerType`, `SlideDirection`）によって関連項目の表示／非表示を切り替える場合、エディタ拡張（`CustomEditor`）で `UnityEditor.AnimatedValues.AnimBool` と `EditorGUILayout.BeginFadeGroup` を使用して実装する。
+  - 単純な `if` による即時トグル切り替えではなく、Unity 標準コンポーネントと同様の滑らかなフェード・伸縮アニメーションを提供することで、Inspector 操作の体験と可読性を向上させる。
+- **実装パターン**:
+  - `OnEnable` で `new AnimBool(初期値)` を作成し、`animBool.valueChanged.AddListener(Repaint)` を登録（`OnDisable` で解除）。
+  - `OnInspectorGUI` 内で `animBool.target = 条件式;` を更新。
+  - `if (EditorGUILayout.BeginFadeGroup(animBool.faded))` で囲み、必要に応じて `EditorGUI.indentLevel` を調整して対象プロパティを描画後、`EditorGUILayout.EndFadeGroup()` を呼ぶ。
+- **見出しと `[Header]` 属性の共存**:
+  - `CustomEditor` 側で手動の `EditorGUILayout.LabelField` による見出しを乱立させず、コンポーネント側の `[Header]` 属性による見出し描画に委ねる（二重見出しの防止）。
+- **不要な基底プロパティの非表示**:
+  - 当該コンポーネントで使用しない基底のプロパティ（例: `LoadingScreen` における `_playTrigger`）は Inspector から除外して表示を整理する。

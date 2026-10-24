@@ -1,0 +1,18 @@
+{
+    "name": "Hisui.UI.Loading",
+    "rootNamespace": "Hisui.UI.Components",
+    "references": [
+        "Hisui.UI.Core",
+        "LitMotion",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

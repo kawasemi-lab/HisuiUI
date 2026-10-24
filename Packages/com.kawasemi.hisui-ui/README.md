@@ -37,3 +37,10 @@ Hisui.UI.Core       ← Hisui.UI.Palette ← Hisui.UI.Components
     - `Button` の Transition が `Animation` の場合、Animator がスケール・位置を操作すると競合する。ButtonMotion と併用する場合は `Color Tint` などを使うこと。
     - 他の ButtonMotion や `PanelTransition` と同じ `RectTransform` を操作すると競合する。見た目用の子オブジェクトに分けるなどで回避すること。
   - 詳細: `Assets/Documents/ButtonMotion_Guide.md`
+- **`LoadingScreen`** (`Component/Hisui/UI/Loading Screen`)
+  - 画面全体を覆うローディング表示。フェードでの出入りとスピナー演出（連続回転・ステップ回転、Dots拡縮ループ）。
+  - シーン遷移（`LoadSceneAsync`）と同一シーン内の処理ラップ（`RunAsync`、参照カウント対応）の両方をサポート。
+  - 最低表示時間（`MinDisplayTime`）の保証、シーン間永続化（`DontDestroyOnLoad` / `LoadingScreen.Instance`）対応。
+  - 独立アセンブリ `Hisui.UI.Loading`（`Core` のみ参照。**uPalette / `Hisui.UI.Palette` に依存しない**。色やスプライトには触れず、見た目はプレファブ側で設定）。
+  - 推奨 Canvas モード: **Screen Space - Overlay**（Screen Space - Camera はシーン遷移時にカメラが破棄されると表示が崩れるため非推奨）。
+  - 詳細: `Assets/Documents/LoadingScreen_Guide.md`

@@ -1,0 +1,19 @@
+{
+    "name": "Hisui.UI.Loading.Editor",
+    "rootNamespace": "Hisui.UI.Editor",
+    "references": [
+        "Hisui.UI.Core",
+        "Hisui.UI.Loading"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
