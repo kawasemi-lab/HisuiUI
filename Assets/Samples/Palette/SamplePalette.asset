@@ -22,6 +22,7 @@ MonoBehaviour:
       - 25a4c397-0fe7-4bee-a68b-db4bba872cb3
       - d04a09b3-b5b3-4924-925d-31742a525434
       - f2ed4503-1867-4101-a2da-6fb8c0b10fde
+      - 78982a5a-df7b-4b83-8601-eee6d33a6f0f
       _values:
       - _id: 7e18506b-b39e-4b23-8f84-6cbd95472ff7
         _name:
@@ -79,6 +80,14 @@ MonoBehaviour:
           - b2c91921-a095-40c8-8ca1-b83020147fe5
           _values:
           - _value: {r: 1, g: 1, b: 1, a: 1}
+      - _id: 78982a5a-df7b-4b83-8601-eee6d33a6f0f
+        _name:
+          _value: Danger
+        _values:
+          _keys:
+          - b2c91921-a095-40c8-8ca1-b83020147fe5
+          _values:
+          - _value: {r: 0.9137255, g: 0.33169702, b: 0.21176472, a: 1}
     _themes:
       _keys:
       - b2c91921-a095-40c8-8ca1-b83020147fe5
@@ -95,6 +104,7 @@ MonoBehaviour:
       - 25a4c397-0fe7-4bee-a68b-db4bba872cb3
       - d04a09b3-b5b3-4924-925d-31742a525434
       - f2ed4503-1867-4101-a2da-6fb8c0b10fde
+      - 78982a5a-df7b-4b83-8601-eee6d33a6f0f
     _themeOrders:
       _ids:
       - b2c91921-a095-40c8-8ca1-b83020147fe5

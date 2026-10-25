@@ -119,17 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &380298113 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7397289796110282301, guid: 5a4db155a24a9e24d9a2e458d4a983bd, type: 3}
-  m_PrefabInstance: {fileID: 831311878}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!224 &380298116 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 172613536969528698, guid: 5a4db155a24a9e24d9a2e458d4a983bd, type: 3}
@@ -165,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HisuiUISubSceneDemo
   _loadingScreen: {fileID: 0}
-  _backToMainSceneButton: {fileID: 380298113}
+  _backToMainSceneButton: {fileID: 831311880}
 --- !u!4 &385082621
 Transform:
   m_ObjectHideFlags: 0
@@ -376,6 +365,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &831311880 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1360142235469373151, guid: 5a4db155a24a9e24d9a2e458d4a983bd, type: 3}
+  m_PrefabInstance: {fileID: 831311878}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a891ef1d4965cfa40b2320f1bfc010fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Hisui.UI.Button::Hisui.UI.Components.CustomButton
 --- !u!1 &1626621665
 GameObject:
   m_ObjectHideFlags: 0

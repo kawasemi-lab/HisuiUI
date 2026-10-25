@@ -261,7 +261,7 @@ MonoBehaviour:
     separateOutOffset: 0
     outOffset: {x: 0, y: 40}
   _target: {fileID: 454676278478845919}
-  _closeButton: {fileID: 8993800183302344684}
+  _closeButton: {fileID: 619284897101152014}
 --- !u!225 &8195219374420626760
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -472,6 +472,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a4db155a24a9e24d9a2e458d4a983bd, type: 3}
+--- !u!114 &619284897101152014 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1360142235469373151, guid: 5a4db155a24a9e24d9a2e458d4a983bd, type: 3}
+  m_PrefabInstance: {fileID: 1907299168709386705}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a891ef1d4965cfa40b2320f1bfc010fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Hisui.UI.Button::Hisui.UI.Components.CustomButton
 --- !u!224 &1737590549250847915 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 172613536969528698, guid: 5a4db155a24a9e24d9a2e458d4a983bd, type: 3}
@@ -488,14 +499,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!114 &8993800183302344684 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7397289796110282301, guid: 5a4db155a24a9e24d9a2e458d4a983bd, type: 3}
-  m_PrefabInstance: {fileID: 1907299168709386705}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button

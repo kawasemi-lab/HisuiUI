@@ -6,6 +6,8 @@
         "Hisui.UI.Palette",
         "Hisui.UI.Components",
         "Hisui.UI.Button",
+        "UnityEngine.UI",
+        "UnityEditor.UI",
         "uPalette",
         "LitMotion",
         "Unity.TextMeshPro"
