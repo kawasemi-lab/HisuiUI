@@ -4,9 +4,6 @@ using Hisui.UI.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-#if ENABLE_INPUT_SYSTEM
-using UnityEngine.InputSystem;
-#endif
 
 /// <summary>
 /// サブシーン（BuildIndex = 1）用のデモコントローラー。
@@ -40,17 +37,6 @@ public class HisuiUISubSceneDemo : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        // Esc, Backspace, または B キーでメインシーンに戻る
-        if (WasKeyPressed(KeyCode.Escape, Key.Escape) ||
-            WasKeyPressed(KeyCode.Backspace, Key.Backspace) ||
-            WasKeyPressed(KeyCode.B, Key.B))
-        {
-            BackToMainScene();
-        }
-    }
-
     /// <summary>
     /// メインシーン（BuildIndex = 0）にローディング画面を伴って戻る。
     /// </summary>
@@ -76,16 +62,5 @@ public class HisuiUISubSceneDemo : MonoBehaviour
             Debug.LogWarning("[HisuiUI SubScene Demo] LoadingScreen not found. Loading scene directly.");
             await SceneManager.LoadSceneAsync(0, LoadSceneMode.Single).WithCancellation(ct);
         }
-    }
-
-    private bool WasKeyPressed(KeyCode oldKey, Key newKey)
-    {
-#if ENABLE_INPUT_SYSTEM
-        if (Keyboard.current != null)
-        {
-            return Keyboard.current[newKey].wasPressedThisFrame;
-        }
-#endif
-        return Input.GetKeyDown(oldKey);
     }
 }

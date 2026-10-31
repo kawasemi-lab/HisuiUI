@@ -4,9 +4,6 @@ using Hisui.UI.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-#if ENABLE_INPUT_SYSTEM
-using UnityEngine.InputSystem;
-#endif
 
 public class HisuiUIDemo : MonoBehaviour
 {
@@ -143,59 +140,6 @@ public class HisuiUIDemo : MonoBehaviour
     private void OnGaugeValueChanged(float newValue)
     {
         _currentHp = newValue;
-    }
-
-    private void Update()
-    {
-        // キーボード操作の検出（新旧 Input System 両対応）
-        if (WasKeyPressed(KeyCode.Space, Key.Space))
-        {
-            TogglePanel();
-        }
-        else if (WasKeyPressed(KeyCode.D, Key.D))
-        {
-            DecreaseGauge();
-        }
-        else if (WasKeyPressed(KeyCode.H, Key.H))
-        {
-            IncreaseGauge();
-        }
-        else if (WasKeyPressed(KeyCode.R, Key.R))
-        {
-            ResetGauge();
-        }
-        else if (WasKeyPressed(KeyCode.E, Key.E))
-        {
-            PlayEdgeSlideIn();
-        }
-        else if (WasKeyPressed(KeyCode.U, Key.U))
-        {
-            PlayPopup();
-        }
-        else if (WasKeyPressed(KeyCode.L, Key.L))
-        {
-            LoadSubScene();
-        }
-        else if (WasKeyPressed(KeyCode.O, Key.O))
-        {
-            ShowFullScreenPanelWithLoading();
-        }
-        else if (WasKeyPressed(KeyCode.C, Key.C))
-        {
-            HideFullScreenPanelWithLoading();
-        }
-        else if (WasKeyPressed(KeyCode.T, Key.T))
-        {
-            PlayTypewriter();
-        }
-        else if (WasKeyPressed(KeyCode.Y, Key.Y))
-        {
-            SkipTypewriter();
-        }
-        else if (WasKeyPressed(KeyCode.P, Key.P) && !IsModifierHeld())
-        {
-            TogglePause();
-        }
     }
 
     // --- LoadingScreen 操作 ---
@@ -436,27 +380,5 @@ public class HisuiUIDemo : MonoBehaviour
         _isPaused = !_isPaused;
         Time.timeScale = _isPaused ? 0f : 1f;
         Debug.Log($"[HisuiUI Demo] Time.timeScale = {Time.timeScale}");
-    }
-
-    private bool WasKeyPressed(KeyCode oldKey, Key newKey)
-    {
-#if ENABLE_INPUT_SYSTEM
-        if (Keyboard.current != null)
-        {
-            return Keyboard.current[newKey].wasPressedThisFrame;
-        }
-#endif
-        return Input.GetKeyDown(oldKey);
-    }
-
-    private bool IsModifierHeld()
-    {
-#if ENABLE_INPUT_SYSTEM
-        if (Keyboard.current != null)
-        {
-            return Keyboard.current.ctrlKey.isPressed || Keyboard.current.leftCommandKey.isPressed || Keyboard.current.rightCommandKey.isPressed;
-        }
-#endif
-        return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.RightCommand);
     }
 }

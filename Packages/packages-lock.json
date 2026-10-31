@@ -30,7 +30,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.ugui": "2.0.0",
+        "com.unity.ugui": "1.0.0",
         "com.cysharp.unitask": "2.5.11",
         "com.annulusgames.lit-motion": "2.0.2"
       }
